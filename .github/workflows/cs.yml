@@ -99,8 +99,8 @@ jobs:
         sed -i "s/^CONFIG_TOOLCHAIN_DIR=.*$/CONFIG_TOOLCHAIN_DIR=${CONFIG_TOOLCHAIN_DIR}/g" .config
         cp -f .config /opt/images/"$m".config
         done
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v1-release
+    - name : 上传固件
+      uses: actions/upload-artifact@master
       with:
         name: opt_images
         path: /opt/images
