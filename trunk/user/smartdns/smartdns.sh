@@ -14,6 +14,7 @@ sdns_port=`nvram get sdns_port`
 sdns_tcp_server=`nvram get sdns_tcp_server`
 sdns_ipv6_server=`nvram get sdns_ipv6_server`
 snds_ip_change=`nvram get snds_ip_change`
+snds_ipv6=`nvram get snds_ipv6`
 sdns_www=`nvram get sdns_www`
 sdns_exp=`nvram get sdns_exp`
 snds_redirect=`nvram get snds_redirect`
@@ -78,6 +79,9 @@ gensdnssecond
 echo "cache-size $snds_cache" >> $SMARTDNS_CONF
 if [ $snds_ip_change -eq 1 ];then
 echo "dualstack-ip-selection yes" >> $SMARTDNS_CONF
+echo "dualstack-ip-selection-threshold $(nvram get snds_ip_change_time)" >> $SMARTDNS_CONF
+elif [ $snds_ipv6 -eq 1 ];then
+echo "force-AAAA-SOA yes" >> $SMARTDNS_CONF
 fi
 if [ $sdns_www -eq 1 ];then
 echo "prefetch-domain yes" >> $SMARTDNS_CONF
@@ -121,19 +125,20 @@ non="-exclude-default-group"
 fi
 if [ $sdnss_type = "tcp" ]; then
 if [ $sdnss_port = "default" ]; then
-echo "server-tcp $sdnss_ip $ipc $named $non" >> $SMARTDNS_CONF
+echo "server-tcp $sdnss_ip:53 $ipc $named $non" >> $SMARTDNS_CONF
 else
 echo "server-tcp $sdnss_ip:$sdnss_port $ipc $named $non" >> $SMARTDNS_CONF
 fi
 elif [ $sdnss_type = "udp" ]; then
 if [ $sdnss_port = "default" ]; then
 echo "server $sdnss_ip" >> $SMARTDNS_CONF
+echo "server $sdnss_ip:53 $ipc $named $non" >> $SMARTDNS_CONF
 else
 echo "server $sdnss_ip:$sdnss_port $ipc $named $non" >> $SMARTDNS_CONF
 fi
 elif [ $sdnss_type = "tls" ]; then
 if [ $sdnss_port = "default" ]; then
-echo "server-tls $sdnss_ip $ipc $named $non" >> $SMARTDNS_CONF
+echo "server-tls $sdnss_ip:53 $ipc $named $non" >> $SMARTDNS_CONF
 else
 echo "server-tls $sdnss_ip:$sdnss_port $ipc $named $non" >> $SMARTDNS_CONF
 fi
@@ -353,7 +358,7 @@ rm -f /tmp/whitelist.conf
 rm -f /tmp/blacklist.conf
 smartdns_process=`pidof smartdns`
 if [ -n "$smartdns_process" ];then 
-	logger -t "SS" "关闭smartdns进程..."
+	logger -t "SmartDNS" "关闭smartdns进程..."
 	killall smartdns >/dev/null 2>&1
 	kill -9 "$smartdns_process" >/dev/null 2>&1
 fi

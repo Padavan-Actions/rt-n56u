@@ -1993,7 +1993,12 @@ static int shadowsocks_action_hook(int eid, webs_t wp, int argc, char **argv)
 		notify_rc(RCN_RESTART_SS_TUNNEL);
 	} else if (!strcmp(ss_action, "Update_gfwlist")) {
 		notify_rc(RCN_RESTART_GFWLIST_UPD);
+	}else if (!strcmp(ss_action, "Update_dlink")) {
+		notify_rc(RCN_RESTART_DLINK);
+	}else if (!strcmp(ss_action, "Reset_dlink")) {
+		notify_rc(RCN_RESTART_REDLINK);
 	}
+	
 	websWrite(wp, "<script>restart_needed_time(%d);</script>\n", needed_seconds);
 	return 0;
 }
@@ -2044,7 +2049,7 @@ static int rules_count_hook(int eid, webs_t wp, int argc, char **argv)
 	websWrite(wp, "function chnroute_count() { return '%s';}\n", count);
 #if defined(APP_SHADOWSOCKS)
 	memset(count, 0, sizeof(count));
-	fstream = popen("grep ^ipset /etc/storage/gfwlist/gfwlist_list.conf |wc -l","r");
+	fstream = popen("cat /etc/storage/gfwlist/gfwlist_list.conf |wc -l","r");
 	if(fstream) {
 		fgets(count, sizeof(count), fstream);
 		pclose(fstream);
@@ -3951,7 +3956,7 @@ static void
 do_kp_crt_file(const char *url, FILE *stream)
 {
     dump_file(stream, "/etc/storage/koolproxy/ca.crt");
-	fputs("\r\n", stream); /* terminator */
+	fputs("\r\n", stream);
 }
 #endif
 

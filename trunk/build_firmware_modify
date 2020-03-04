@@ -11,6 +11,8 @@ cp -f configs/templates/$1.config .config
 sed -i 's/CONFIG_FIRMWARE_INCLUDE_DNSFORWARDER=y/CONFIG_FIRMWARE_INCLUDE_DNSFORWARDER=n/g' .config
 sed -i 's/CONFIG_FIRMWARE_INCLUDE_MENTOHUST=y/CONFIG_FIRMWARE_INCLUDE_MENTOHUST=n/g' .config
 sed -i 's/CONFIG_FIRMWARE_INCLUDE_SCUTCLIENT=y/CONFIG_FIRMWARE_INCLUDE_SCUTCLIENT=n/g' .config
+sed -i 's/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=y/g' .config
+sed -i 's/CONFIG_FIRMWARE_INCLUDE_SRELAY=y/CONFIG_FIRMWARE_INCLUDE_SRELAY=n/g' .config
 echo "CONFIG_FIRMWARE_INCLUDE_ADBYBY=y" >> .config #adbyby plus+
 echo "CONFIG_FIRMWARE_INCLUDE_ALIDDNS=y" >> .config #aliddns
 echo "CONFIG_FIRMWARE_INCLUDE_SMARTDNS=y" >> .config #smartdns
@@ -19,8 +21,10 @@ echo "CONFIG_FIRMWARE_INCLUDE_TROJAN=y" >> .config #集成trojan执行文件，�
 echo "CONFIG_FIRMWARE_INCLUDE_KOOLPROXY=y" >> .config #KP广告过滤
 echo "CONFIG_FIRMWARE_INCLUDE_CADDY=y" >> .config #在线文件管理服务
 echo "CONFIG_FIRMWARE_INCLUDE_CADDYBIN=n" >> .config #集成caddu执行文件，此文件有13M,请注意固件大小。如果不集成，会从网上下载下来执行，不影响正常使用
-echo "CONFIG_FIRMWARE_INCLUDE_KUMASOCKS=y" >> .config
+echo "CONFIG_FIRMWARE_INCLUDE_KUMASOCKS=n" >> .config
 echo "CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=y" >> .config
+echo "CONFIG_FIRMWARE_INCLUDE_IPT2SOCKS=y" >> .config
+echo "CONFIG_FIRMWARE_INCLUDE_MICROSOCKS=y" >> .config
 if [ "$1" = "PSG1208" ] || [ "$1" = "PSG1218" ] || [ "$1" = "PSG712" ]; then
 echo "CONFIG_FIRMWARE_INCLUDE_SMARTDNSBIN=n" >> .config #smartdns二进制文件
 else
@@ -91,10 +95,6 @@ fi
 
 # load project root config
 . $ROOTDIR/.config
-
-if [ "$CONFIG_FIRMWARE_INCLUDE_ALIDDNS" = "y" ] ; then
-sed -i 's/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=y/g' .config
-fi
 
 if [ ! -f "$ROOTDIR/vendors/Ralink/$CONFIG_PRODUCT/config.arch" ] ; then
 	echo "Project product dir ($CONFIG_PRODUCT) not found! Terminate."
