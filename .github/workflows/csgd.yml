@@ -1,4 +1,4 @@
-name: Build MT7620 DDNS_SSL HTTPS=y
+name: Build MT7620 csgd
 
 on: 
   release:
